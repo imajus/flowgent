@@ -1,7 +1,7 @@
 {
   "name": "@majus/n8n-nodes-flow",
   "version": "0.1.0",
-  "description": "Family of nodes to support Flow blockchain interactions",
+  "description": "Support for the Flow blockchain interactions for n8n",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -33,12 +33,11 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/FlowChainApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/Flow/FlowChainQuery.node.js",
+      "dist/nodes/Flow/FlowChainMutate.node.js"
     ]
   },
   "devDependencies": {
@@ -51,5 +50,11 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "@onflow/fcl": "^1.13.4",
+    "@onflow/types": "^1.4.1",
+    "elliptic": "^6.6.1",
+    "sha3": "^2.1.4"
   }
 }
