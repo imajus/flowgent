@@ -1,0 +1,193 @@
+{
+  "name": "Agentic - Flowgent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "655406ef-0d5e-4404-b46d-9783e0e735b5",
+      "name": "When chat message received",
+      "webhookId": "6973c5ed-2122-4220-a9f0-4af7016a02be"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "71b1a7ad-9d82-4ead-a347-3e01df026bde",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        200
+      ],
+      "id": "99474a82-d412-4742-966f-05a9e076274b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "PnZ4m0dfSsri3VEi",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        520,
+        200
+      ],
+      "id": "83934c8b-4a80-404f-b682-58871b073193",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "List_Templates",
+        "description": "Returns a list of available blockchain transaction templates with their ID, title, description, and a list of supported arguments. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "ZrEhiHMPnYwUTS4T",
+          "mode": "list",
+          "cachedResultName": "Agentic - FLIX Templates"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "search"
+          ],
+          "schema": [
+            {
+              "id": "search",
+              "displayName": "search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        820,
+        200
+      ],
+      "id": "f968192f-5d04-4bda-85d5-3222ac80ae13",
+      "name": "Call n8n Workflow Tool"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get the network parameters.\n",
+        "method": "POST",
+        "url": "https://flow-testnet.g.alchemy.com/v2/UuTLENJdSUkaz8TwIZjaY-CscdY-tpCu",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"eth_getBlockByNumber\",\n  \"params\": [\"latest\", false],\n  \"id\": 1\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        200
+      ],
+      "id": "9b353982-a8d1-4930-b140-d13300c935d4",
+      "name": "Flow Network parameters"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flow Network parameters": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0156b09e-58ac-49f3-92e3-b743b31a511b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9a127041ab2c0a456c612db2c737ce582ec8f8dd14205bcdca991d2585b3c019"
+  },
+  "id": "E0nISeDJ4vu3pdKb",
+  "tags": []
+}
