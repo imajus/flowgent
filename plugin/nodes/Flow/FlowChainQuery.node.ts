@@ -41,7 +41,7 @@ export class FlowChainQuery implements INodeType {
 			try {
 				const template = this.getNodeParameter('template', index, '') as string;
 				const { items: args } = this.getNodeParameter('arguments', index) as { items: object[] };
-				const json = await flowQuery(template, args/* , account */);
+				const json = await flowQuery(template, args /* , account */);
 				outputs.push({ json });
 			} catch (error) {
 				if (this.continueOnFail()) {

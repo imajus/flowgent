@@ -33,13 +33,12 @@ function accountWrapper(account) {
 	};
 }
 
-export async function flowQuery(template, args/* , account */) {
+export async function flowQuery(template, args) {
 	const result = await fcl.query({
 		template,
 		args: argsWrapper(args),
-		// authz: accountWrapper(account),
 	});
-	return {};
+	return { result };
 }
 
 export async function flowMutate(template, args, account) {
