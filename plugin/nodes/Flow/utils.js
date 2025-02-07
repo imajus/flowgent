@@ -8,8 +8,14 @@ fcl.config({
 	'flow.network': 'testnet',
 });
 
+function normalizeArgValue(value) {
+	return value === '' ? null : value;
+}
+
 function argsWrapper(args) {
-	return (arg, t) => args.map(({ value, type, optional }) => arg(value, optional ? t.Optional(t[type]) : t[type]));
+	if (args) {
+		return (arg, t) => args.map(({ value, type, optional }) => arg(normalizeArgValue(value), optional ? t.Optional(t[type]) : t[type]));
+	}
 }
 
 function accountWrapper(account) {

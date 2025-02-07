@@ -64,6 +64,13 @@ export const Property: Record<string, INodeProperties> = {
 						default: '',
 						description: 'Argument value',
 					},
+					{
+						displayName: 'Optional',
+						name: 'optional',
+						type: 'boolean',
+						default: false,
+						description: 'Whether value is optional',
+					},
 				],
 			},
 		],
