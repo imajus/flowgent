@@ -33,7 +33,6 @@ export class FlowChainQuery implements INodeType {
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		// const account = await this.getCredentials('flowChainApi');
 		const items = this.getInputData();
 		const outputs = [] as INodeExecutionData[];
 		// Variables could have different value for each item in case they contain an expression
@@ -41,7 +40,7 @@ export class FlowChainQuery implements INodeType {
 			try {
 				const template = this.getNodeParameter('template', index, '') as string;
 				const { items: args } = this.getNodeParameter('arguments', index) as { items: object[] };
-				const json = await flowQuery(template, args /* , account */);
+				const json = await flowQuery(template, args);
 				outputs.push({ json });
 			} catch (error) {
 				if (this.continueOnFail()) {

@@ -1,5 +1,5 @@
-import * as fcl from "@onflow/fcl"
-import * as types from "@onflow/types"
+import * as fcl from '@onflow/fcl';
+import * as types from '@onflow/types';
 import { Signer } from './signer';
 
 //FIXME: Make it possible to switch dynamically
@@ -14,7 +14,10 @@ function normalizeArgValue(value) {
 
 function argsWrapper(args) {
 	if (args) {
-		return (arg, t) => args.map(({ value, type, optional }) => arg(normalizeArgValue(value), optional ? t.Optional(t[type]) : t[type]));
+		return (arg, t) =>
+			args.map(({ value, type, optional }) =>
+				arg(normalizeArgValue(value), optional ? t.Optional(t[type]) : t[type]),
+			);
 	}
 }
 
@@ -28,13 +31,13 @@ function accountWrapper(account) {
 			keyId: Number(account.keyId),
 			signingFunction: (signable) => {
 				return Promise.resolve({
-					f_type: "CompositeSignature",
-					f_vsn: "1.0.0",
+					f_type: 'CompositeSignature',
+					f_vsn: '1.0.0',
 					addr: fcl.withPrefix(account.address),
 					keyId: Number(account.keyId),
 					signature: signer.signWithKey(signable.message),
 				});
-			}
+			},
 		};
 	};
 }
