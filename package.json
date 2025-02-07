@@ -1,0 +1,30 @@
+{
+  "name": "flowgent",
+  "version": "1.0.0",
+  "description": "AI agent build with n8n capable of interacting with the Flow blockchain",
+  "engines": {
+    "node": ">=18.10"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "npx n8n"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imajus/flowgent.git"
+  },
+  "keywords": [
+    "n8n",
+    "flow",
+    "ai-agent"
+  ],
+  "author": "Denis Perov <denis.perov@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imajus/flowgent/issues"
+  },
+  "homepage": "https://ethglobal.com/showcase/flowgent-8k3a8",
+  "dependencies": {
+    "n8n": "^1.77.3"
+  }
+}
