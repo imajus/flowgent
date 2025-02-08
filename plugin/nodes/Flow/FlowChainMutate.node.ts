@@ -7,6 +7,7 @@ import type {
 import { NodeOperationError } from 'n8n-workflow';
 import { flowMutate } from './utils';
 import { Property } from './commons';
+import { isString } from 'lodash';
 
 export class FlowChainMutate implements INodeType {
 	description: INodeTypeDescription = {
@@ -29,7 +30,22 @@ export class FlowChainMutate implements INodeType {
 				required: true,
 			},
 		],
-		properties: [Property.Template, Property.Options],
+		properties: [
+			Property.Template,
+			{
+				displayName: 'Options',
+				name: 'options',
+				type: 'collection',
+				placeholder: 'Add Option',
+				default: {},
+				description: 'Additional options',
+				options: [
+					Property.Arguments,
+					Property.ArgumentsField,
+					Property.Limit,
+				],
+			}
+		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -39,11 +55,13 @@ export class FlowChainMutate implements INodeType {
 		// Variables could have different value for each item in case they contain an expression
 		for (let index = 0; index < items.length; index++) {
 			try {
-				const template = this.getNodeParameter('template', index, '') as string;
+				const templateRaw = this.getNodeParameter('template', index, '') as string;
+				const template = isString(templateRaw) ? JSON.parse(templateRaw) : templateRaw;
+				const limit = this.getNodeParameter('gasLimit', index, '') as string;
 				const { argsList, argsField } = this.getNodeParameter('options', index) as any;
 				// @ts-ignore
 				const args = argsList?.items.map(({ value }) => value) ?? items[index].json[argsField];
-				const json = await flowMutate(template, args, account);
+				const json = await flowMutate(template, args, account, limit);
 				outputs.push({ json });
 			} catch (error) {
 				if (this.continueOnFail()) {

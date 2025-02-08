@@ -67,10 +67,10 @@ export async function flowQuery(template, args) {
 	return { result };
 }
 
-export async function flowMutate(template, args, account) {
+export async function flowMutate(template, args, account, limit) {
 	const hash = await fcl.mutate({
 		template,
-		limit: 50,
+		limit,
 		args: argsWrapper(template, args),
 		authz: accountWrapper(account),
 	});

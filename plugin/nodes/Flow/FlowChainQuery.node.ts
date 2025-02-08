@@ -5,6 +5,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+import { isString } from 'lodash';
 import { flowQuery } from './utils';
 import { Property } from './commons';
 
@@ -29,7 +30,21 @@ export class FlowChainQuery implements INodeType {
 				required: false,
 			},
 		],
-		properties: [Property.Template, Property.Options],
+		properties: [
+			Property.Template,
+			{
+				displayName: 'Options',
+				name: 'options',
+				type: 'collection',
+				placeholder: 'Add Option',
+				default: {},
+				description: 'Additional options',
+				options: [
+					Property.Arguments,
+					Property.ArgumentsField,
+				],
+			}
+		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -38,7 +53,8 @@ export class FlowChainQuery implements INodeType {
 		// Variables could have different value for each item in case they contain an expression
 		for (let index = 0; index < items.length; index++) {
 			try {
-				const template = this.getNodeParameter('template', index, '') as string;
+				const templateRaw = this.getNodeParameter('template', index, '') as string;
+				const template = isString(templateRaw) ? JSON.parse(templateRaw) : templateRaw;
 				const { argsList, argsField } = this.getNodeParameter('options', index) as any;
 				// @ts-ignore
 				const args = argsList?.items.map(({ value }) => value) ?? items[index].json[argsField];

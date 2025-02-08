@@ -87,22 +87,20 @@ const ArgumentsField: INodeProperties = {
 	hint: 'The field must hold a plain array of arguments',
 };
 
-const Options: INodeProperties = {
-	displayName: 'Options',
-	name: 'options',
-	type: 'collection',
-	placeholder: 'Add Option',
-	default: {},
-	description: 'Additional options',
-	options: [
-		Arguments,
-		ArgumentsField,
-	],
+const Limit: INodeProperties = {
+	displayName: 'Gas Limit',
+	name: 'gasLimit',
+	type: 'number',
+	typeOptions: {
+		minValue: 0,
+	},
+	default: 500,
+	description: 'Gas limit in FLOW for the transaction execution',
 };
 
 export const Property: Record<string, INodeProperties> = {
 	Template,
 	Arguments,
 	ArgumentsField,
-	Options,
+	Limit,
 };
