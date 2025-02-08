@@ -29,7 +29,7 @@ export class FlowChainMutate implements INodeType {
 				required: true,
 			},
 		],
-		properties: [Property.Template, Property.Arguments],
+		properties: [Property.Template, Property.Options],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -40,7 +40,9 @@ export class FlowChainMutate implements INodeType {
 		for (let index = 0; index < items.length; index++) {
 			try {
 				const template = this.getNodeParameter('template', index, '') as string;
-				const { items: args } = this.getNodeParameter('arguments', index) as { items: object[] };
+				const { argsList, argsField } = this.getNodeParameter('options', index) as any;
+				// @ts-ignore
+				const args = argsList?.items.map(({ value }) => value) ?? items[index].json[argsField];
 				const json = await flowMutate(template, args, account);
 				outputs.push({ json });
 			} catch (error) {

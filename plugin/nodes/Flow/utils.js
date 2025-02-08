@@ -1,5 +1,6 @@
 import * as fcl from '@onflow/fcl';
 import * as types from '@onflow/types';
+import { sortBy } from 'lodash';
 import { Signer } from './signer';
 
 //FIXME: Make it possible to switch dynamically
@@ -12,12 +13,28 @@ function normalizeArgValue(value) {
 	return value === '' ? null : value;
 }
 
-function argsWrapper(args) {
-	if (args) {
-		return (arg, t) =>
-			args.map(({ value, type, optional }) =>
-				arg(normalizeArgValue(value), optional ? t.Optional(t[type]) : t[type]),
-			);
+function stringToType(type, t) {
+	if (type.endsWith('?')) {
+		return t.Optional(stringToType(type.substr(0, -1), t));
+	} else if (/^[.+?]$/.test(type)) {
+		return t.Array(stringToType(type.substr(1, -1), t));
+	} else if (type in t) {
+		return t[type];
+	} else {
+		throw new Error(`Unsupported type: ${type}`);
+	}
+}
+
+function argsWrapper(template, args) {
+	if (template.data.parameters) {
+		return (arg, t) => sortBy(template.data.parameters, 'index').map((param, index) => {
+			const value = normalizeArgValue(args[index]);
+			const type = stringToType(param.type, t);
+			return arg(value, type);
+		});
+		// args.map((value/* { value, type, optional } */) =>
+		// 	arg(normalizeArgValue(value) , optional ? t.Optional(t[type]) : t[type]),
+		// );
 	}
 }
 
@@ -45,7 +62,7 @@ function accountWrapper(account) {
 export async function flowQuery(template, args) {
 	const result = await fcl.query({
 		template,
-		args: argsWrapper(args),
+		args: argsWrapper(template, args),
 	});
 	return { result };
 }
@@ -54,7 +71,7 @@ export async function flowMutate(template, args, account) {
 	const hash = await fcl.mutate({
 		template,
 		limit: 50,
-		args: argsWrapper(args),
+		args: argsWrapper(template, args),
 		authz: accountWrapper(account),
 	});
 	const result = await fcl.tx(hash).onceSealed();
