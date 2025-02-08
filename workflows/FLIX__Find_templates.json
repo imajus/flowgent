@@ -1,0 +1,146 @@
+{
+  "name": "FLIX: Find templates",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://gist.githubusercontent.com/imajus/8036a6590b01e1fa2516b25808c24f00/raw/2751067a6c1e891e50c9565db991572376691e7a/flix-manifest.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "51794aa2-85f0-4b53-8364-ed9ef0f98e77",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "524ee55a-6d51-49de-bfdc-c96acb520ad8",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07d1df47-37de-44ea-849d-d8e68df02f3b",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "29dd0605-d546-493b-920e-c8f7be084ac1",
+              "name": "title",
+              "value": "={{ $json.data.messages[0].i18n[0].translation }}",
+              "type": "string"
+            },
+            {
+              "id": "d5f08202-f3c5-4fe5-8969-ccfefc33573c",
+              "name": "description",
+              "value": "={{ $json.data.messages[1].i18n[0].translation }}",
+              "type": "string"
+            },
+            {
+              "id": "fb83d295-3e01-493a-b1b2-2827d8189470",
+              "name": "arguments",
+              "value": "={{ $json.data.parameters.map(({  label, type }) => `${label}: ${type}`) }}",
+              "type": "array"
+            },
+            {
+              "id": "b97ab63a-3ab1-44e8-a4f3-0a0bf8550065",
+              "name": "output",
+              "value": "={{ `${$json.data.output.label}: ${$json.data.output.type}` }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        0
+      ],
+      "id": "29f8b3e1-ed40-48ca-8c31-aca65bf6b0a1",
+      "name": "Transform output"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "templates",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "e7990877-2a04-484e-beb8-37ac44056cee",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Transform output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform output": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c04c4fa2-b686-4ed5-85b0-62559dd5901b",
+  "meta": {
+    "instanceId": "5ff91f5619779909dbc84e459f81521da0a9665caadc5a729dd2d05407e45320"
+  },
+  "id": "HdWkMwdNg4qcRZ5Q",
+  "tags": []
+}

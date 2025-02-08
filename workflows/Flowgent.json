@@ -1,5 +1,5 @@
 {
-  "name": "Agentic - Flowgent",
+  "name": "Flowgent",
   "nodes": [
     {
       "parameters": {
@@ -9,41 +9,46 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
       "position": [
-        220,
+        0,
         0
       ],
-      "id": "655406ef-0d5e-4404-b46d-9783e0e735b5",
+      "id": "d750f32e-9015-451d-b3d4-35e8d5ad4d1a",
       "name": "When chat message received",
       "webhookId": "6973c5ed-2122-4220-a9f0-4af7016a02be"
     },
     {
       "parameters": {
-        "options": {}
+        "options": {
+          "systemMessage": "You are the Flow blockchain interaction assistant. You are capable of transform user's input into actionable intents and then execute them using special tools.\nTake user's input, extract the intent and possible arguments, find the template based on that data and present the execution plan to the user. Once confirmed, execute it.\nWhen using the template arguments be sure to follow the floating point format (Fix, UFix) by representing a value as a string and always using dot separator.",
+          "returnIntermediateSteps": true
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        440,
+        220,
         0
       ],
-      "id": "71b1a7ad-9d82-4ead-a347-3e01df026bde",
+      "id": "8dfb9c68-01ec-4ef6-84b2-3ab75e734a14",
       "name": "AI Agent"
     },
     {
       "parameters": {
-        "options": {}
+        "options": {
+          "temperature": 0.5
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
-        360,
-        200
+        -60,
+        260
       ],
-      "id": "99474a82-d412-4742-966f-05a9e076274b",
+      "id": "8f418a5f-f83f-4f67-bd70-fafaa93a48e0",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
-          "id": "PnZ4m0dfSsri3VEi",
+          "id": "sXPBMx7a60hlvJ9J",
           "name": "OpenAI account"
         }
       }
@@ -55,52 +60,11 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        520,
-        200
+        80,
+        300
       ],
-      "id": "83934c8b-4a80-404f-b682-58871b073193",
+      "id": "92a955d4-9fb8-4b7a-9247-96b1e17a17ca",
       "name": "Window Buffer Memory"
-    },
-    {
-      "parameters": {
-        "name": "List_Templates",
-        "description": "Returns a list of available blockchain transaction templates with their ID, title, description, and a list of supported arguments. ",
-        "workflowId": {
-          "__rl": true,
-          "value": "ZrEhiHMPnYwUTS4T",
-          "mode": "list",
-          "cachedResultName": "Agentic - FLIX Templates"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [
-            "search"
-          ],
-          "schema": [
-            {
-              "id": "search",
-              "displayName": "search",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 2,
-      "position": [
-        820,
-        200
-      ],
-      "id": "f968192f-5d04-4bda-85d5-3222ac80ae13",
-      "name": "Call n8n Workflow Tool"
     },
     {
       "parameters": {
@@ -114,11 +78,67 @@
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
       "position": [
-        680,
-        200
+        240,
+        300
       ],
-      "id": "9b353982-a8d1-4930-b140-d13300c935d4",
+      "id": "9f91a604-68bb-48c2-90d7-cd30096b35b2",
       "name": "Flow Network parameters"
+    },
+    {
+      "parameters": {
+        "name": "Find_Templates",
+        "description": "Call this tool to get a list of available blockchain interaction templates with their ID, title, description, and supported arguments. It may return multiple templates from which you need to select the one which is the most relevant to the user's query.",
+        "workflowId": {
+          "__rl": true,
+          "value": "HdWkMwdNg4qcRZ5Q",
+          "mode": "list",
+          "cachedResultName": "FLIX: Find templates"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        380,
+        300
+      ],
+      "id": "c4ef7ad4-d82e-4775-befe-0c1e7a8340c3",
+      "name": "FLIX: List templates"
+    },
+    {
+      "parameters": {
+        "name": "Call_Interaction_Template",
+        "description": "Call this tool to execute a blockchain interaction template. Call another tool to obtain a template ID. Do your best to properly convert user's raw input into the list of the interaction arguments.\nIMPORTANT: Pass to the tool data in the following JSON format:\n```json\n{\n  \"id\": \"string - Template ID to execute\",\n  \"args\": [\"interaction arguments\",\"as an array\",\"of strings/numbers/booleans\",100,true],\n}\n```",
+        "workflowId": {
+          "__rl": true,
+          "value": "8vb4FVFaU7whjTJP",
+          "mode": "list",
+          "cachedResultName": "FLIX: Execute template"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ],
+      "id": "604d42df-1588-49b7-9965-251873386c34",
+      "name": "FLIX: Execute template"
     }
   ],
   "pinData": {},
@@ -156,7 +176,7 @@
         ]
       ]
     },
-    "Call n8n Workflow Tool": {
+    "Flow Network parameters": {
       "ai_tool": [
         [
           {
@@ -167,7 +187,18 @@
         ]
       ]
     },
-    "Flow Network parameters": {
+    "FLIX: List templates": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FLIX: Execute template": {
       "ai_tool": [
         [
           {
@@ -179,15 +210,15 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "0156b09e-58ac-49f3-92e3-b743b31a511b",
+  "versionId": "b177a94d-b508-4f8b-b7d4-fed3eb68f315",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "9a127041ab2c0a456c612db2c737ce582ec8f8dd14205bcdca991d2585b3c019"
+    "instanceId": "5ff91f5619779909dbc84e459f81521da0a9665caadc5a729dd2d05407e45320"
   },
-  "id": "E0nISeDJ4vu3pdKb",
+  "id": "T0nLRx3n82mR9pS2",
   "tags": []
 }

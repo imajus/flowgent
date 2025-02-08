@@ -1,0 +1,112 @@
+{
+  "name": "FLIX: Get template data",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://gist.githubusercontent.com/imajus/8036a6590b01e1fa2516b25808c24f00/raw/2751067a6c1e891e50c9565db991572376691e7a/flix-manifest.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "9ba4fbd9-4f09-45e5-8983-3b91d77856a8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "b623ed1e-bda8-489b-834a-5290d746af6a",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3f6ab82c-6cab-46e5-bf78-704e5d7034ac",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "={{ $('Workflow Input Trigger').item.json.query.toLowerCase() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "19f27b39-cf5f-430a-b7c7-22322285d140",
+      "name": "Filter",
+      "alwaysOutputData": false
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7fa6b28d-2901-4edd-9a99-a9594f5e287b",
+  "meta": {
+    "instanceId": "5ff91f5619779909dbc84e459f81521da0a9665caadc5a729dd2d05407e45320"
+  },
+  "id": "f7sfg84SsyEVwkDB",
+  "tags": []
+}

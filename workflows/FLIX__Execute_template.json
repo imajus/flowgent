@@ -1,0 +1,429 @@
+{
+  "name": "FLIX: Execute template",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -100,
+        120
+      ],
+      "id": "7b706c42-66b2-4ae1-8aaf-fc625c2b38a3",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "url": "=https://flix-agentic.majus.app/v1/templates/{{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        -100
+      ],
+      "id": "04548a16-2e55-4a7d-ba9a-f8497239d3d6",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6bc6f810-f31b-4f14-b969-01dbadd49954",
+              "name": "result",
+              "value": "99",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        -100
+      ],
+      "id": "34f1a6b8-03fc-484e-af3e-ce6d5c6be587",
+      "name": "Fake result",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(({ json }) => {\n  const [id,...args] = json.query.split(',');\n  return { id, args };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        120,
+        -100
+      ],
+      "id": "f14261fc-8ab6-4ac3-8f71-881d67e08b40",
+      "name": "Code",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "f7sfg84SsyEVwkDB",
+          "mode": "list",
+          "cachedResultName": "FLIX: Get template data"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        260
+      ],
+      "id": "a34a5c97-6df2-4e94-b972-d7e796ba770e",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1080,
+        140
+      ],
+      "id": "a1eeb0d4-3796-43a2-9294-217417690bc9",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "41d39d36-9b90-496c-a28c-c85c2e866804",
+              "name": "query",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        380,
+        260
+      ],
+      "id": "2ac35773-b5ea-45c0-a929-53aeeacb091a",
+      "name": "Prepare query"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7fb1c2a8-0ba5-4998-ace0-6c6f8d49ff66",
+              "name": "template",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        820,
+        260
+      ],
+      "id": "c7fcdf12-7461-493e-bfcd-7a0ec1b4bd38",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.parse($json.query) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        120,
+        120
+      ],
+      "id": "1e249aef-8489-4191-8fde-86400836529e",
+      "name": "Parse JSON input"
+    },
+    {
+      "parameters": {
+        "template": "={{ $json.template }}",
+        "options": {
+          "argsField": "args"
+        }
+      },
+      "type": "@majus/n8n-nodes-flow.flowChainQuery",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        -20
+      ],
+      "id": "ed10c34a-623b-4ed9-8754-f84d7f66ee06",
+      "name": "The Flow - Query",
+      "credentials": {
+        "flowChainApi": {
+          "id": "uARTb8aqSUUqNuEr",
+          "name": "The Flow Blockchain account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.template.data.type }}",
+                    "rightValue": "script",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Script"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d78871ec-af2c-4a70-bfcc-7600fd8c836c",
+                    "leftValue": "={{ $json.template.data.type }}",
+                    "rightValue": "transaction",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Transaction"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1300,
+        140
+      ],
+      "id": "a4ad09b9-9efd-4a7b-a81e-20a95e02ca98",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "template": "={{ $json.template }}",
+        "options": {
+          "argsField": "args"
+        }
+      },
+      "type": "@majus/n8n-nodes-flow.flowChainMutate",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        140
+      ],
+      "id": "ed923869-f5ef-4574-bd4f-ece1c92d56a8",
+      "name": "The Flow - Mutate",
+      "credentials": {
+        "flowChainApi": {
+          "id": "uARTb8aqSUUqNuEr",
+          "name": "The Flow Blockchain account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Unsupported template type: {{ $json.template.data.type }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        320
+      ],
+      "id": "adf99e04-f8ca-445b-83c0-918fd6faa906",
+      "name": "Stop and Error"
+    }
+  ],
+  "pinData": {
+    "Workflow Input Trigger": [
+      {
+        "json": {
+          "query": "{\"id\":\"244aa6ab50d683a8c28fdab2ae55e0f4a9a4e1e7c584331611063af054c03e05\",\"args\":[\"@FLOW\",0.1,\"0x66b91c901e8ab3fa\"]}"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        []
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare query": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Parse JSON input": {
+      "main": [
+        [
+          {
+            "node": "Prepare query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "The Flow - Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "The Flow - Mutate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f961904f-2397-4f17-8782-34324653d969",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ff91f5619779909dbc84e459f81521da0a9665caadc5a729dd2d05407e45320"
+  },
+  "id": "H7SAAUScdSbU0EWS",
+  "tags": []
+}
